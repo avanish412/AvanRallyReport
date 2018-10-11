@@ -296,6 +296,9 @@ namespace AvanRallyReport.Helpers
 
         public static string DecryptString(string EncryptedText)
         {
+            if (EncryptedText == "")
+                return EncryptedText;
+
             byte[] encryptedTextBytes = Convert.FromBase64String(EncryptedText);
 
             MemoryStream ms = new MemoryStream();
