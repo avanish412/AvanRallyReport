@@ -1,0 +1,240 @@
+﻿<Controls:MetroWindow x:Class="AvanRallyReport.View.MainWindow"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:AvanRallyReport.View"
+        xmlns:rrmodal="clr-namespace:AvanRallyReport.Model;assembly=RallyReportModel"
+        xmlns:rrviewmodel="clr-namespace:AvanRallyReport.ViewModel;assembly=RallyReportViewModel"
+        mc:Ignorable="d"
+        Title="AVAN Rally Report" Height="650" Width="1000" 
+        Icon="rally.ico"
+        BorderThickness="2" BorderBrush="Gray">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.DataContext>
+        <rrviewmodel:RallyReportViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="rrmodal:ReportType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <local:InvertBoolConverter x:Key="invertBoolConverter"/>
+        <local:StoryToBrushConverter x:Key="StoryToBrushConverter"/>
+        <local:BoolToVisibleOrHidden x:Key="booltoVisibleConverter" Collapse="False" Reverse="False"/>
+        <local:BoolToVisibleOrHidden x:Key="booltoInvisibleConverter" Collapse="True" Reverse="True"/>
+        <Style x:Key="HighlightRow" TargetType="{x:Type DataGridRow}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=FormattedID,
+                                    Converter={StaticResource StoryToBrushConverter}}"
+                                    Value="true">
+                    <Setter Property="Background" Value="SkyBlue"/>
+                </DataTrigger>
+                <Trigger Property="IsSelected" Value="True" >
+                    <Setter Property="Background" Value="Gainsboro" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.RowSpan="2"
+                       Grid.Column="0" Grid.ColumnSpan="2"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontSize="30"
+                       Content="You are Logged-in"
+                       Visibility="{Binding LoggedIn,Converter={StaticResource booltoVisibleConverter}}"/>
+                <Label Grid.Row="0" 
+                   Grid.Column="0" 
+                   Content="User ID" 
+                   Margin="3,1,1,1" 
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                   Visibility="{Binding LoggedIn,Converter={StaticResource booltoInvisibleConverter}}"/>
+                <Label Grid.Row="1" 
+                   Grid.Column="0" 
+                   Content="Password" 
+                   Margin="3,1,1,1" 
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                   Visibility="{Binding LoggedIn,Converter={StaticResource booltoInvisibleConverter}}"/>
+                <TextBox Height="15"
+                     Grid.Row="0" 
+                     Grid.Column="1" 
+                     Margin="3,3,3,3" Text="{Binding txtUserID, Mode=TwoWay}"
+                     IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                     Visibility="{Binding LoggedIn,Converter={StaticResource booltoInvisibleConverter}}"/>
+                <PasswordBox Grid.Row="1" 
+                     Grid.Column="1" 
+                     Height="15"
+                     Margin="3,3,3,5" 
+                     local:PasswordHelper.Attach="True"
+                     local:PasswordHelper.Password="{Binding txtPassword, Mode=TwoWay}" 
+                     IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                     Visibility="{Binding LoggedIn,Converter={StaticResource booltoInvisibleConverter}}"/>
+                <Button Grid.Row="2" 
+                        Grid.Column="0" 
+                        Margin="10,4,10,4"
+                        Height="14"
+                        Width="70"
+                        Content="Reset"
+                        IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                        Command="{Binding ResetCommand}"/>
+                <Button Grid.Row="2" 
+                        Grid.Column="1" 
+                        Margin="30,4,30,4"
+                        Height="14"
+                        Width="100"
+                        Content="Login"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                        Visibility="{Binding LoggedIn,Converter={StaticResource booltoInvisibleConverter}}"/>
+            </Grid>
+            <Label Grid.Row="0" 
+                   Grid.Column="1" 
+                   Content="Project" 
+                   Margin="3,3,3,3" 
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"/>
+            <Label Grid.Row="1" 
+                   Grid.Column="1" 
+                   Content="Release" 
+                   Margin="3,3,3,3" 
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"/>
+            <ComboBox Grid.Row="0" 
+                      Grid.Column="2" 
+                      Height="22"
+                      Margin="3,8,3,8" 
+                      ItemsSource="{Binding cmbProjects}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding Path=SelectedProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedProjectChangedCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+            <ComboBox Grid.Row="1" 
+                      Grid.Column="2" 
+                      Height="22"
+                      Margin="3,8,3,8" 
+                      ItemsSource="{Binding cmbReleases}"
+                      DisplayMemberPath="Name"
+                      SelectedValue="{Binding Path=SelectedRelease, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"
+                      />
+            <Label Grid.Row="0" 
+                   Grid.Column="3" 
+                   Content="Sprint" 
+                   Margin="3,3,3,3" 
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"/>
+            <Label Grid.Row="1" 
+                   Grid.Column="3" 
+                   Content="Report Type" 
+                   Margin="0,3,0,3"  
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"/>
+            <Grid Grid.Row="0" 
+                  Grid.Column="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0"
+                      Height="22"
+                      Margin="3,8,3,8" 
+                      ItemsSource="{Binding cmbSprints}"
+                      DisplayMemberPath="Name"
+                      SelectedValue="{Binding Path=SelectedSprint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"/>
+                <CheckBox Grid.Column="1" 
+                          Content="Tasks" 
+                          FontSize="7" 
+                          IsChecked="{Binding TasksIncluded}"/>
+            </Grid>
+           
+            <ComboBox Name="cmbReportType"
+                      Grid.Row="1" 
+                      Grid.Column="4"
+                      Height="22"
+                      Margin="3,8,3,8" 
+                      ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
+                      SelectedValue="{Binding Path=SelectedReportType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"/>
+            <Button Content="Generate" 
+                    Grid.Row="0" 
+                    Grid.RowSpan="1" 
+                    Grid.Column= "5" 
+                    Height="32"
+                    Width="120"
+                    Margin="5,8,5,8"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Command="{Binding PopulateCommand}"
+                    IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"/>
+            <Button Content="Export" 
+                    Grid.Row="1" 
+                    Grid.RowSpan="1" 
+                    Grid.Column= "5" 
+                    Height="32"
+                    Width="120"
+                    Margin="5,8,5,8"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Click="Export_Click"
+                    IsEnabled="{Binding InProgress,Converter={StaticResource invertBoolConverter}}"/>
+        </Grid>
+        <DataGrid x:Name="ResultGrid"
+                    Grid.Row="1"
+                    Margin="10,10,10,10"
+                    AutoGenerateColumns="True"
+                    IsReadOnly="True"
+                    GridLinesVisibility="All"
+                    CanUserSortColumns="True"                    
+                    ItemsSource="{Binding gridItems,UpdateSourceTrigger=PropertyChanged}"
+                    RowStyle="{StaticResource HighlightRow}">
+           
+        </DataGrid>
+        <Controls:ProgressRing IsActive="{Binding InProgress}"/>
+    </Grid>
+</Controls:MetroWindow>
